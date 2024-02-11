@@ -74,14 +74,14 @@ export const Prompt = () => {
                         <div className="mb-4 block">
                             <Button type="submit" isProcessing={isSubmitting}>Submit</Button>
                         </div>
-                    </div>
-                    {imageUrl && <>
+                        {imageUrl && <>
                     <img src={imageUrl} alt="Generated" width={500}/>
                     <Button.Group>
-                        <Button color="gray">Download</Button>
-                        <Button color="gray">Regenerate</Button>
-                    </Button.Group>t
+                        <Button>Download</Button>
+                        <Button>Regenerate</Button>
+                    </Button.Group>
                     </>}
+                    </div>
                 </Form>
             )}
         </Formik>
