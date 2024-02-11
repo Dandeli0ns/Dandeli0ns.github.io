@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export const NavBar = () => {
   return (
-    <Navbar fluid>
+    <Navbar fluid rounded>
       <NavbarBrand href="https://flowbite-react.com">
         <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Flowbite React</span>
       </NavbarBrand>
