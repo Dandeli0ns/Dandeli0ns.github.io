@@ -7,13 +7,13 @@ import { NavBar } from './components/navBar/NavBar';
 
 const App = () =>  {
   return (
-    <>
+    <div>
     <NavBar />
         <Routes>
           <Route path="/" element={<ImageGeneration />}>
           </Route>
         </Routes>
-    </>
+    </div>
   );
 }
 
