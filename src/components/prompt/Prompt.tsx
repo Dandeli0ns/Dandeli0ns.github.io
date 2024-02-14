@@ -7,9 +7,32 @@ import { Fragment, useState } from "react"
 export const Prompt = () => {
     const [imageUrl, setImageUrl] = useState(""); 
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [openModal, setOpenModal] = useState(false);
+    const [isRegenerating, setIsRegenerating] = useState(false);
+    const [generateErrorModal, setGenerateErrorModal] = useState(false);
+    const [regenerateErrorModal, setRegenerateErrorModal] = useState(false);
     
     const openai = new OpenAI({ apiKey: process.env.REACT_APP_OPENAI_API_KEY, dangerouslyAllowBrowser: true });
+
+    const onRegenerateClick = async () => {
+        if (imageUrl === undefined) {
+            setRegenerateErrorModal(true);
+        }
+        setIsRegenerating(true);
+
+        const image = await fetch(imageUrl);
+
+        const response = await openai.images.createVariation({image});
+        
+        const regenerateUrl = response.data[0].url;
+
+        if (regenerateUrl !== undefined){
+            setImageUrl(regenerateUrl);
+        }
+        else {
+            setRegenerateErrorModal(true);
+            setIsRegenerating(false);
+        }
+    }
 
     return (
         <Formik
@@ -31,13 +54,13 @@ export const Prompt = () => {
                 }
                 catch{
                     setIsSubmitting(false);
-                    setOpenModal(true)
+                    setGenerateErrorModal(true)
                 }
             }}
             >
             {formik => (
                 <Form>
-                    <Modal show={openModal} onClose={() => setOpenModal(false)}>
+                    <Modal show={generateErrorModal} onClose={() => setGenerateErrorModal(false)}>
                         <Modal.Header>Oops!</Modal.Header>
                         <Modal.Body>
                         <div className="space-y-6">
@@ -47,7 +70,22 @@ export const Prompt = () => {
                         </div>
                         </Modal.Body>
                         <Modal.Footer>
-                        <Button color="gray" onClick={() => setOpenModal(false)}>
+                        <Button color="gray" onClick={() => setGenerateErrorModal(false)}>
+                            Decline
+                        </Button>
+                        </Modal.Footer>
+                    </Modal>
+                    <Modal show={regenerateErrorModal} onClose={() => setRegenerateErrorModal(false)}>
+                        <Modal.Header>Oops!</Modal.Header>
+                        <Modal.Body>
+                        <div className="space-y-6">
+                            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                An error occured connecting to OpenAI
+                            </p>
+                        </div>
+                        </Modal.Body>
+                        <Modal.Footer>
+                        <Button color="gray" onClick={() => setGenerateErrorModal(false)}>
                             Decline
                         </Button>
                         </Modal.Footer>
@@ -77,8 +115,7 @@ export const Prompt = () => {
                         {imageUrl && <>
                     <img src={imageUrl} alt="Generated" width={500}/>
                     <Button.Group>
-                        <Button>Download</Button>
-                        <Button>Regenerate</Button>
+                        <Button isProcessing={isRegenerating} onClick={onRegenerateClick}>Regenerate</Button>
                     </Button.Group>
                     </>}
                     </div>
